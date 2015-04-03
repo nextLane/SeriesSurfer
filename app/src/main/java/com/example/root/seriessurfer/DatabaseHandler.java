@@ -23,12 +23,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "seriessurfer";
 
     // forms table name
-    private static final String TABLE_FORMS = "movies";
+    private static final String TABLE_NAME = "favorites";
 
     // forms Table Columns names
-    private static final String KEY_ID = "fid";
+    private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
-    private static final String KEY_XML = "xml";
+    private static final String KEY_RATING = "rating";
+    private static final String KEY_GENRE = "genre";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,79 +38,66 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_FORMS_TABLE = "CREATE TABLE " + TABLE_FORMS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
-                + KEY_XML + " TEXT" + ")";
-        db.execSQL(CREATE_FORMS_TABLE);
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_TITLE + " TEXT,"
+                + KEY_RATING + " TEXT,"
+                + KEY_GENRE + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE);
     }
 
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FORMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 
         // Create tables again
         onCreate(db);
     }
 
 
-/*
-    void addForms(forms form) {
+
+    void addFavs(String title, String rate, String genre ) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_TITLE, form.getTitle()); // form Name
-        values.put(KEY_XML, form.getXML()); // form Phone
+        values.put(KEY_TITLE, title); // form Name
+        values.put(KEY_RATING, rate); // form Phone
+        values.put(KEY_GENRE, genre); // form Phone
 
         // Inserting Row
-        db.insert(TABLE_FORMS, null, values);
+        db.insert(TABLE_NAME, null, values);
         db.close(); // Closing database connection
     }
 
-    // Getting single form
-    forms getForm(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_FORMS, new String[] { KEY_ID,
-                        KEY_TITLE, KEY_XML }, KEY_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        Log.d("__---id asked for:",""+id);
-        forms f = new forms(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2));
-        // return form
-
-        return f;
-    }
 
     // Getting All forms
-    public List<forms> getAllForms() {
-        List<forms> formList = new ArrayList<forms>();
+    public List<String[]> getAllForms() {
+        List<String []> favList = new ArrayList<String []>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_FORMS;
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME+" GROUP BY title";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
+        String row[];
         if (cursor.moveToFirst()) {
             do {
-                forms f = new forms();
-                f.setID(Integer.parseInt(cursor.getString(0)));
-                f.setTitle(cursor.getString(1));
-                f.setXML(cursor.getString(2));
-                // Adding form to list
-                formList.add(f);
+                row= new String[4];
+                row[0]=cursor.getString(0);
+                row[1]=cursor.getString(1);
+                row[2]=cursor.getString(2);
+                row[3]=cursor.getString(3);
+               favList.add(row);
             } while (cursor.moveToNext());
         }
 
         // return form list
-        return formList;
+        return favList;
     }
-*/
+
     /*// Updating single form
     public int updateForm(forms form) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -133,8 +121,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 */
     // Getting forms Count
-    public int getFormsCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_FORMS;
+    public int getMoviesCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();

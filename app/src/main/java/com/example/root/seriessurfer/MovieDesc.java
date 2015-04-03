@@ -1,5 +1,6 @@
 package com.example.root.seriessurfer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -7,8 +8,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,13 +31,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by root on 2/4/15.
- */
+
+
 public class MovieDesc extends ActionBarActivity {
 
     String title = "friends";
     String url;
+    DatabaseHandler dh;
     //URL to get JSON Array
 
     //JSON Node Names
@@ -54,12 +58,24 @@ public class MovieDesc extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        dh= new DatabaseHandler(this);
         Bundle extras = getIntent().getExtras();
+
         title = extras.getString("title");
         Log.d("----", title);
         JSONObject c=null;
 
-        url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority("www.omdbapi.com")
+                .appendQueryParameter("t", title)
+                .appendQueryParameter("y", "")
+                .appendQueryParameter("plot", "short")
+                .appendQueryParameter("r", "json");
+        String url = builder.build().toString();
+
+        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
 
 
         // Creating new JSON Parser
@@ -105,8 +121,61 @@ public class MovieDesc extends ActionBarActivity {
             e.printStackTrace();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
 
+
+        return true;
+
+
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_share) {
+            final TextView title = (TextView) findViewById(R.id.title);
+            final TextView rating = (TextView) findViewById(R.id.rating);
+
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this:"+ title.getText()+" with IMDB rating:"+ rating.getText()+"! @SeriesSurfer");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+
+
+
+            return true;
+        }
+
+        if (id == R.id.action_add) {
+
+            final TextView title = (TextView) findViewById(R.id.title);
+            final TextView rating = (TextView) findViewById(R.id.rating);
+            final TextView genre = (TextView) findViewById(R.id.genre);
+
+
+
+            dh.getWritableDatabase();
+            dh.addFavs(title.getText()+"", rating.getText()+"", genre.getText()+"");
+            dh.close();
+            Toast.makeText(getApplicationContext(), "Added to favorites! <3",
+                    Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private String url;
@@ -120,6 +189,7 @@ public class MovieDesc extends ActionBarActivity {
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {
+
                 URL urlConnection = new URL(url);
                 HttpURLConnection connection = (HttpURLConnection) urlConnection
                         .openConnection();
