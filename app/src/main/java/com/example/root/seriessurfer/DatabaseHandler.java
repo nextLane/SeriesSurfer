@@ -111,15 +111,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(form.getID()) });
     }
 */
-    // Deleting single form
-  /*  public void deleteForms(forms  f) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_FORMS, KEY_ID + " = ?",
-                new String[] { String.valueOf(f.getID()) });
-        db.close();
-    }
 
-*/
     // Getting forms Count
     public int getMoviesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_NAME;
@@ -132,7 +124,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
+  public void deleteMovies()
+  {
+      SQLiteDatabase db = this.getWritableDatabase();
 
+      db.execSQL("DELETE FROM " + TABLE_NAME);
+
+      db.close();
+  }
 
 
 

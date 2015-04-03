@@ -58,7 +58,6 @@ public class MovieDesc extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
         dh= new DatabaseHandler(this);
         Bundle extras = getIntent().getExtras();
 
@@ -82,45 +81,63 @@ public class MovieDesc extends ActionBarActivity {
         JSONParser jParser = new JSONParser();
         // Getting JSON from URL
        c = jParser.getJSONFromUrl(url);
-        try {
 
 
-            // Storing  JSON item in a Variable
-
-            //Importing TextView
-            final TextView title = (TextView) findViewById(R.id.title);
-            final ImageView pic = (ImageView) findViewById(R.id.poster);
-            final TextView cast = (TextView) findViewById(R.id.cast);
-            final TextView runtime = (TextView) findViewById(R.id.runtime);
-            final TextView year = (TextView) findViewById(R.id.year);
-            final TextView writer = (TextView) findViewById(R.id.writer);
-            final TextView country = (TextView) findViewById(R.id.country);
-            final TextView plot = (TextView) findViewById(R.id.plot);
-            final TextView awards = (TextView) findViewById(R.id.awards);
-            final TextView genre = (TextView) findViewById(R.id.genre);
-            final TextView rating = (TextView) findViewById(R.id.rating);
-
-            //Set JSON Data in TextView
-            title.setText(c.getString("Title"));
-
-            cast.setText(c.getString(ACTORS));
-            runtime.setText(c.getString(RUNTIME));
-            year.setText(c.getString(YEAR));
-            writer.setText(c.getString(WRITER));
-            country.setText(c.getString(COUNTRY));
-            plot.setText(c.getString(PLOT));
-            awards.setText(c.getString(AWARDS));
-            genre.setText(c.getString(GENRE));
-            rating.setText(c.getString("imdbRating"));
-
-            new ImageLoadTask(c.getString("Poster"), pic).execute();
+            try {
 
 
+                // Storing  JSON item in a Variable
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                //Importing TextView
+                final TextView title = (TextView) findViewById(R.id.title);
+                final ImageView pic = (ImageView) findViewById(R.id.poster);
+                final TextView cast = (TextView) findViewById(R.id.cast);
+                final TextView runtime = (TextView) findViewById(R.id.runtime);
+                final TextView year = (TextView) findViewById(R.id.year);
+                final TextView writer = (TextView) findViewById(R.id.writer);
+                final TextView country = (TextView) findViewById(R.id.country);
+                final TextView plot = (TextView) findViewById(R.id.plot);
+                final TextView awards = (TextView) findViewById(R.id.awards);
+                final TextView genre = (TextView) findViewById(R.id.genre);
+                final TextView rating = (TextView) findViewById(R.id.rating);
+
+                //Set JSON Data in TextView
+                if(c.getString("Response").equalsIgnoreCase("False"))
+                {
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+
+
+                    startActivity(i);
+                    Toast.makeText(getApplicationContext(), "Enter the correct name!",
+                            Toast.LENGTH_LONG).show();
+
+                }
+                title.setText(c.getString("Title"));
+
+                cast.setText(c.getString(ACTORS));
+                runtime.setText(c.getString(RUNTIME));
+                year.setText(c.getString(YEAR));
+                writer.setText(c.getString(WRITER));
+                country.setText(c.getString(COUNTRY));
+                plot.setText(c.getString(PLOT));
+                awards.setText(c.getString(AWARDS));
+                genre.setText(c.getString(GENRE));
+                rating.setText(c.getString("imdbRating"));
+
+                new ImageLoadTask(c.getString("Poster"), pic).execute();
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
