@@ -19,6 +19,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
       //  DatabaseHandler dh= new DatabaseHandler(this);
         Button enter = (Button) findViewById(R.id.button);
+        Button fav =(Button) findViewById(R.id.button2);
         final EditText et=(EditText)findViewById(R.id.editText);
 // Listening to register new account link
         enter.setOnClickListener(new View.OnClickListener() {
@@ -30,6 +31,20 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
+
+        fav.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+// Switching to ListView screen
+                Intent i = new Intent(getApplicationContext(), FavoritesList.class);
+
+
+                startActivity(i);
+            }
+        });
+
+
+
+
 
 
     }

@@ -16,8 +16,10 @@
         android:background="@android:color/white"
         android:lines="2"
         android:minWidth="@dimen/abc_action_bar_stacked_tab_max_width"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="166dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button2"
+        android:layout_alignEnd="@+id/button2" />
 
     <Button
         android:layout_width="wrap_content"
@@ -25,7 +27,18 @@
         android:text="Go Surf..."
         android:id="@+id/button"
         android:background="#ffffffff"
+        android:layout_alignTop="@+id/editText"
+        android:layout_toRightOf="@+id/editText"
+        android:layout_toEndOf="@+id/editText"
+        android:layout_alignBottom="@+id/editText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Watch List"
+        android:id="@+id/button2"
+        android:background="#ffffffff"
+        android:layout_marginTop="107dp"
         android:layout_below="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp" />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
