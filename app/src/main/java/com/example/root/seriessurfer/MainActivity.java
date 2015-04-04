@@ -30,22 +30,24 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 MovieDesc md = new MovieDesc();
-                if (md.movieExists(et.getText() + "").equals("True")) {
+                if (haveNetworkConnection()) {
+                    if (md.movieExists(et.getText() + "").equals("True")) {
 
 // Switching to ListView screen
-                    Intent i = new Intent(getApplicationContext(), MovieDesc.class);
-                    i.putExtra("title", "" + et.getText());
-                    if (haveNetworkConnection())
+                        Intent i = new Intent(getApplicationContext(), MovieDesc.class);
+                        i.putExtra("title", "" + et.getText());
+
                         startActivity(i);
 
-                    else {
-                        Toast.makeText(getApplicationContext(), "Please get connected to Internet, then try!",
-                                Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Enter the correct name!",
+                                Toast.LENGTH_SHORT).show();
+
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Enter the correct name!",
-                            Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getApplicationContext(), "Please get connected to Internet, then try!",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

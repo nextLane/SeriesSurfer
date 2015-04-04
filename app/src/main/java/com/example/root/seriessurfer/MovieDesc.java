@@ -91,44 +91,44 @@ public class MovieDesc extends ActionBarActivity {
         }
 
 
-            try {
+        try {
 
 
-                // Storing  JSON item in a Variable
+            // Storing  JSON item in a Variable
 
-                //Importing TextView
-                final TextView title = (TextView) findViewById(R.id.title);
-                final ImageView pic = (ImageView) findViewById(R.id.poster);
-                final TextView cast = (TextView) findViewById(R.id.cast);
-                final TextView runtime = (TextView) findViewById(R.id.runtime);
-                final TextView year = (TextView) findViewById(R.id.year);
-                final TextView writer = (TextView) findViewById(R.id.writer);
-                final TextView country = (TextView) findViewById(R.id.country);
-                final TextView plot = (TextView) findViewById(R.id.plot);
-                final TextView awards = (TextView) findViewById(R.id.awards);
-                final TextView genre = (TextView) findViewById(R.id.genre);
-                final TextView rating = (TextView) findViewById(R.id.rating);
+            //Importing TextView
+            final TextView title = (TextView) findViewById(R.id.title);
+            final ImageView pic = (ImageView) findViewById(R.id.poster);
+            final TextView cast = (TextView) findViewById(R.id.cast);
+            final TextView runtime = (TextView) findViewById(R.id.runtime);
+            final TextView year = (TextView) findViewById(R.id.year);
+            final TextView writer = (TextView) findViewById(R.id.writer);
+            final TextView country = (TextView) findViewById(R.id.country);
+            final TextView plot = (TextView) findViewById(R.id.plot);
+            final TextView awards = (TextView) findViewById(R.id.awards);
+            final TextView genre = (TextView) findViewById(R.id.genre);
+            final TextView rating = (TextView) findViewById(R.id.rating);
 
-                //Set JSON Data in TextView
+            //Set JSON Data in TextView
 
-                title.setText(c.getString("Title"));
+            title.setText(c.getString("Title"));
 
-                cast.setText(c.getString(ACTORS));
-                runtime.setText(c.getString(RUNTIME));
-                year.setText(c.getString(YEAR));
-                writer.setText(c.getString(WRITER));
-                country.setText(c.getString(COUNTRY));
-                plot.setText(c.getString(PLOT));
-                awards.setText(c.getString(AWARDS));
-                genre.setText(c.getString(GENRE));
-                rating.setText(c.getString("imdbRating"));
+            cast.setText(c.getString(ACTORS));
+            runtime.setText(c.getString(RUNTIME));
+            year.setText(c.getString(YEAR));
+            writer.setText(c.getString(WRITER));
+            country.setText(c.getString(COUNTRY));
+            plot.setText(c.getString(PLOT));
+            awards.setText(c.getString(AWARDS));
+            genre.setText(c.getString(GENRE));
+            rating.setText(c.getString("imdbRating"));
 
-                new ImageLoadTask(c.getString("Poster"), pic).execute();
+            new ImageLoadTask(c.getString("Poster"), pic).execute();
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -213,7 +213,7 @@ public class MovieDesc extends ActionBarActivity {
             dh.addFavs(title.getText()+"", rating.getText()+"", genre.getText()+"");
             dh.close();
             Toast.makeText(getApplicationContext(), "Added to favorites! <3",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -257,7 +257,7 @@ public class MovieDesc extends ActionBarActivity {
 
 
 
-        }
+}
 
 
 
