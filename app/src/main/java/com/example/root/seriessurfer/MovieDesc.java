@@ -52,19 +52,21 @@ public class MovieDesc extends ActionBarActivity {
     final String PLOT = "Plot";
 
     JSONArray user = null;
-
+    JSONObject c=null;
+    JSONParser jParser;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        dh= new DatabaseHandler(this);
+
         Bundle extras = getIntent().getExtras();
 
         title = extras.getString("title");
         Log.d("----", title);
-        JSONObject c=null;
 
+        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
+        dh= new DatabaseHandler(this);
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .authority("www.omdbapi.com")
@@ -72,15 +74,21 @@ public class MovieDesc extends ActionBarActivity {
                 .appendQueryParameter("y", "")
                 .appendQueryParameter("plot", "short")
                 .appendQueryParameter("r", "json");
-        String url = builder.build().toString();
+        url = builder.build().toString();
 
         //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
 
 
         // Creating new JSON Parser
-        JSONParser jParser = new JSONParser();
+        jParser = new JSONParser();
         // Getting JSON from URL
-       c = jParser.getJSONFromUrl(url);
+        c = jParser.getJSONFromUrl(url);
+        String b="false";
+        try {
+            b =c.getString("Response");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
             try {
@@ -102,16 +110,7 @@ public class MovieDesc extends ActionBarActivity {
                 final TextView rating = (TextView) findViewById(R.id.rating);
 
                 //Set JSON Data in TextView
-                if(c.getString("Response").equalsIgnoreCase("False"))
-                {
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
 
-
-                    startActivity(i);
-                    Toast.makeText(getApplicationContext(), "Enter the correct name!",
-                            Toast.LENGTH_LONG).show();
-
-                }
                 title.setText(c.getString("Title"));
 
                 cast.setText(c.getString(ACTORS));
@@ -137,7 +136,33 @@ public class MovieDesc extends ActionBarActivity {
 
 
     }
+    public  String movieExists(String title)
+    {
+        dh= new DatabaseHandler(this);
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority("www.omdbapi.com")
+                .appendQueryParameter("t", title)
+                .appendQueryParameter("y", "")
+                .appendQueryParameter("plot", "short")
+                .appendQueryParameter("r", "json");
+        url = builder.build().toString();
 
+        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
+
+
+        // Creating new JSON Parser
+        jParser = new JSONParser();
+        // Getting JSON from URL
+        c = jParser.getJSONFromUrl(url);
+        String b="false";
+        try {
+            b =c.getString("Response");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
