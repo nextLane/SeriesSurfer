@@ -1,16 +1,25 @@
 package com.example.root.seriessurfer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +42,12 @@ import java.util.List;
 
 
 
-public class MovieDesc extends ActionBarActivity {
+public class MovieDesc extends Fragment {
 
     String title = "friends";
     String url;
     DatabaseHandler dh;
+    View v;
     //URL to get JSON Array
 
     //JSON Node Names
@@ -50,85 +60,56 @@ public class MovieDesc extends ActionBarActivity {
     final String AWARDS = "Awards";
     final String WRITER = "Writer";
     final String PLOT = "Plot";
-
     JSONArray user = null;
     JSONObject c=null;
     JSONParser jParser;
+
     @Override
-
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        Bundle extras = getIntent().getExtras();
-
-        title = extras.getString("title");
-        Log.d("----", title);
-
-        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
-        dh= new DatabaseHandler(this);
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http")
-                .authority("www.omdbapi.com")
-                .appendQueryParameter("t", title)
-                .appendQueryParameter("y", "")
-                .appendQueryParameter("plot", "short")
-                .appendQueryParameter("r", "json");
-        url = builder.build().toString();
-
-        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
 
-        // Creating new JSON Parser
-        jParser = new JSONParser();
-        // Getting JSON from URL
-        c = jParser.getJSONFromUrl(url);
-        String b="false";
-        try {
-            b =c.getString("Response");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+            // Bundle extras = getActivity().getIntent().getExtras();
+            try {
+                title = getArguments().getString("title");
+
+            } catch (Exception e) {
+                Log.d("***", "no value specified!!");
+            }
+            //title = extras.getString("title");
+
+            Log.d("----", title);
+
+            new FetchInfo().execute();
+
+            //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
 
 
-        try {
+
+        return inflater.inflate(R.layout.main, container, false);
 
 
-            // Storing  JSON item in a Variable
-
-            //Importing TextView
-            final TextView title = (TextView) findViewById(R.id.title);
-            final ImageView pic = (ImageView) findViewById(R.id.poster);
-            final TextView cast = (TextView) findViewById(R.id.cast);
-            final TextView runtime = (TextView) findViewById(R.id.runtime);
-            final TextView year = (TextView) findViewById(R.id.year);
-            final TextView writer = (TextView) findViewById(R.id.writer);
-            final TextView country = (TextView) findViewById(R.id.country);
-            final TextView plot = (TextView) findViewById(R.id.plot);
-            final TextView awards = (TextView) findViewById(R.id.awards);
-            final TextView genre = (TextView) findViewById(R.id.genre);
-            final TextView rating = (TextView) findViewById(R.id.rating);
-
-            //Set JSON Data in TextView
-
-            title.setText(c.getString("Title"));
-
-            cast.setText(c.getString(ACTORS));
-            runtime.setText(c.getString(RUNTIME));
-            year.setText(c.getString(YEAR));
-            writer.setText(c.getString(WRITER));
-            country.setText(c.getString(COUNTRY));
-            plot.setText(c.getString(PLOT));
-            awards.setText(c.getString(AWARDS));
-            genre.setText(c.getString(GENRE));
-            rating.setText(c.getString("imdbRating"));
-
-            new ImageLoadTask(c.getString("Poster"), pic).execute();
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+   super.onCreate(savedInstanceState);
+
+        v = getView();
+        setHasOptionsMenu(true);
+        final Button fav = (Button) v.findViewById(R.id.button2);
+//        fav.setOnClickListener(new View.OnClickListener() {
+  //          public void onClick(View v) {
+// Switching to ListView screen
+    //            Intent i = new Intent(getActivity(), FavoritesList.class);
+
+
+      //          startActivity(i);
+        //    }
+        //});
 
 
 
@@ -136,41 +117,16 @@ public class MovieDesc extends ActionBarActivity {
 
 
     }
-    public  String movieExists(String title)
-    {
-        dh= new DatabaseHandler(this);
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http")
-                .authority("www.omdbapi.com")
-                .appendQueryParameter("t", title)
-                .appendQueryParameter("y", "")
-                .appendQueryParameter("plot", "short")
-                .appendQueryParameter("r", "json");
-        url = builder.build().toString();
-
-        //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
 
 
-        // Creating new JSON Parser
-        jParser = new JSONParser();
-        // Getting JSON from URL
-        c = jParser.getJSONFromUrl(url);
-        String b="false";
-        try {
-            b =c.getString("Response");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return b;
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.menu_main, menu);
 
 
 
-        return true;
 
 
 
@@ -186,8 +142,8 @@ public class MovieDesc extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_share) {
-            final TextView title = (TextView) findViewById(R.id.title);
-            final TextView rating = (TextView) findViewById(R.id.rating);
+            final TextView title = (TextView) v.findViewById(R.id.title);
+            final TextView rating = (TextView) v.findViewById(R.id.rating);
 
 
             Intent sendIntent = new Intent();
@@ -203,16 +159,16 @@ public class MovieDesc extends ActionBarActivity {
 
         if (id == R.id.action_add) {
 
-            final TextView title = (TextView) findViewById(R.id.title);
-            final TextView rating = (TextView) findViewById(R.id.rating);
-            final TextView genre = (TextView) findViewById(R.id.genre);
+            final TextView title = (TextView) v.findViewById(R.id.title);
+            final TextView rating = (TextView) v.findViewById(R.id.rating);
+            final TextView genre = (TextView) v.findViewById(R.id.genre);
 
 
 
             dh.getWritableDatabase();
             dh.addFavs(title.getText()+"", rating.getText()+"", genre.getText()+"");
             dh.close();
-            Toast.makeText(getApplicationContext(), "Added to favorites! <3",
+            Toast.makeText(getActivity(), "Added to favorites! <3",
                     Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -254,10 +210,97 @@ public class MovieDesc extends ActionBarActivity {
 
     }
 
+    public class FetchInfo extends AsyncTask<Void, Void, JSONObject> {
+        JSONObject c=null;
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            dh = new DatabaseHandler(getActivity());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .authority("www.omdbapi.com")
+                    .appendQueryParameter("t", title)
+                    .appendQueryParameter("y", "")
+                    .appendQueryParameter("plot", "short")
+                    .appendQueryParameter("r", "json");
+            url = builder.build().toString();
+
+            //url = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
+
+
+            // Creating new JSON Parser
+            jParser = new JSONParser();
+            // Getting JSON from URL
+            c = jParser.getJSONFromUrl(url);
+            String b = "false";
+            try {
+                b = c.getString("Response");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+                return c;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject ct) {
+            super.onPostExecute(ct);
+            String b="false";
+            try {
+                b =c.getString("Response");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+
+
+                // Storing  JSON item in a Variable
+
+                //Importing TextView
+                final TextView title = (TextView) v.findViewById(R.id.title);
+                final ImageView pic = (ImageView) v.findViewById(R.id.poster);
+                final TextView cast = (TextView) v.findViewById(R.id.cast);
+                final TextView runtime = (TextView) v.findViewById(R.id.runtime);
+                final TextView year = (TextView) v.findViewById(R.id.year);
+                final TextView writer = (TextView) v.findViewById(R.id.writer);
+                final TextView country = (TextView) v.findViewById(R.id.country);
+                final TextView plot = (TextView) v.findViewById(R.id.plot);
+                final TextView awards = (TextView) v.findViewById(R.id.awards);
+                final TextView genre = (TextView) v.findViewById(R.id.genre);
+                final TextView rating = (TextView) v.findViewById(R.id.rating);
+
+                //Set JSON Data in TextView
+
+                title.setText(c.getString("Title"));
+
+                cast.setText(c.getString(ACTORS));
+                runtime.setText(c.getString(RUNTIME));
+                year.setText(c.getString(YEAR));
+                writer.setText(c.getString(WRITER));
+                country.setText(c.getString(COUNTRY));
+                plot.setText(c.getString(PLOT));
+                awards.setText(c.getString(AWARDS));
+                genre.setText(c.getString(GENRE));
+                rating.setText(c.getString("imdbRating"));
+
+                new ImageLoadTask(c.getString("Poster"), pic).execute();
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+    }
+    }
 
 
 
-}
 
 
 
